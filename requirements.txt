@@ -1,0 +1,6 @@
+Flask-Bcrypt
+Flask
+Flask-SQLAlchemy
+Flask-Login
+SQLAlchemy
+email_validator
