@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 # creacion de la base de datos
 db: SQLAlchemy = SQLAlchemy()
@@ -17,7 +18,7 @@ def create_app(config_type):
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    
+    CORS(app, supports_credentials=True, origins=["http://localhost:3000"]) # permiritr que envie cualqier persona
 
 
     from app.auth import authentication

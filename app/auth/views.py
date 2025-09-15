@@ -1,7 +1,7 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from app.auth import authentication
 from app.auth.models import User
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt, set_access_cookies, unset_jwt_cookies
 from datetime import timedelta
 
 @authentication.route("/register", methods=["POST"])
@@ -9,6 +9,8 @@ def registrar_usuario():
     
     # obtenemos la data del post
     data = request.get_json()
+
+    print(data)
 
     if not data or not all(k in data for k in ("user_name", "user_email", "password")):
         return jsonify({"error": "Faltan datos"}), 400
@@ -25,6 +27,7 @@ def registrar_usuario():
     return jsonify(), 200
     
 
+# login que refresa el token en el front como json
 @authentication.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -35,6 +38,28 @@ def login():
         return jsonify({"message": "Login exitoso", "token": token}), 200
 
     return jsonify({"error": "Credenciales inválidas"}), 401
+
+# login que guarda el token como cookie y no puede accesar el front
+@authentication.route("/loginCookie", methods=["POST"])
+def loginConCookie():
+    data = request.get_json()
+    user = User.query.filter_by(user_email=data.get("user_email")).first()
+
+    if user and user.check_password(data.get("password")):
+        token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=2))
+        
+        resp = make_response(jsonify({"message": "Login exitoso"}), 200)
+        set_access_cookies(resp, token, max_age=60*60*2)
+        return resp
+
+    return jsonify({"error": "Credenciales inválidas"}), 401
+
+
+@authentication.route("/logout", methods=["POST"])
+def logout():
+    resp = make_response(jsonify({"message": "Logout exitoso"}), 200)
+    unset_jwt_cookies(resp)  # borra tanto access como refresh token
+    return resp
 
 
 # Perfil (requiere token)
