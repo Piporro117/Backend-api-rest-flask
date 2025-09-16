@@ -96,4 +96,10 @@ def obtener_usuarios():
     
 
     
-
+# funcion para checar que el token de usaurio sigue activo
+@authentication.route("/me", methods=["GET"])
+@jwt_required()
+def verificacion_token():
+    current_user_id = int(get_jwt_identity())
+    user = User.query.get(current_user_id)
+    return jsonify({"id": user.id, "email": user.user_email})
