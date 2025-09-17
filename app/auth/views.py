@@ -48,7 +48,12 @@ def loginConCookie():
     if user and user.check_password(data.get("password")):
         token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=2))
         
-        resp = make_response(jsonify({"message": "Login exitoso"}), 200)
+        resp = make_response(jsonify({
+        "id": user.id,
+        "user_name": user.user_name,
+        "user_email": user.user_email,
+        "created_date": user.created_date
+    }), 200)
         set_access_cookies(resp, token, max_age=60*60*2)
         return resp
 
