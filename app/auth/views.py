@@ -3,6 +3,7 @@ from app.auth import authentication
 from app.auth.models import User
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt, set_access_cookies, unset_jwt_cookies
 from datetime import timedelta
+from app import db
 
 @authentication.route("/register", methods=["POST"])
 def registrar_usuario():
@@ -68,17 +69,20 @@ def logout():
 
 
 # Perfil (requiere token)
-@authentication.route("/obtenerUsuario", methods=["GET"])
+@authentication.route("/obtenerUsuario/<int:user_id>", methods=["GET"])
 @jwt_required()
-def profile():
-    user_id = int(get_jwt_identity())
+def profile(user_id):
     user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({'error': 'usuario no encontrado'}), 404
+
     return jsonify({
         "id": user.id,
         "user_name": user.user_name,
         "user_email": user.user_email,
         "created_date": user.created_date
-    })
+    }), 200
 
 
 # obtener todos los usuarios
@@ -108,3 +112,35 @@ def verificacion_token():
     current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     return jsonify({"id": user.id, "email": user.user_email})
+
+
+# metodo para la edicion de un usaurio
+@authentication.route("/editarUsuario/<int:user_id>", methods=["PUT"])
+@jwt_required()
+def editar_usuario(user_id):
+    data = request.get_json()  # Lo que mande el frontend en el body
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    # Actualizar solo los campos que vengan en el body
+    if "user_name" in data:
+        user.user_name = data["user_name"]
+    if "user_email" in data:
+        user.user_email = data["user_email"]
+
+    try:
+        db.session.commit()
+        return jsonify({
+            "message": "Usuario actualizado con éxito",
+            "user": {
+                "id": user.id,
+                "user_name": user.user_name,
+                "user_email": user.user_email,
+                "created_date": user.created_date
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al actualizar usuario", "details": str(e)}), 500
