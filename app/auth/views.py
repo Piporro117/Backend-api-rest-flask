@@ -115,8 +115,7 @@ def verificacion_token():
 
 
 # metodo para la edicion de un usaurio
-@authentication.route("/editarUsuario/<int:user_id>", methods=["PUT"])
-@jwt_required()
+@authentication.route("/editarUsuario/<int:user_id>", methods=["POST"])
 def editar_usuario(user_id):
     data = request.get_json()  # Lo que mande el frontend en el body
 
@@ -144,3 +143,21 @@ def editar_usuario(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al actualizar usuario", "details": str(e)}), 500
+
+
+# metodo de elimianr
+@authentication.route("/eliminarUsuario/<int:user_id>", methods=["DELETE"])
+#@jwt_required()  # si quieres protegerlo con token
+def eliminar_usuario(user_id):
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"message": "Usuario eliminado con éxito"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al eliminar usuario", "details": str(e)}), 500
