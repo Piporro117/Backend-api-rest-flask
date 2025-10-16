@@ -35,7 +35,7 @@ def login():
     user = User.query.filter_by(user_email=data.get("user_email")).first()
 
     if user and user.check_password(data.get("password")):
-        token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=2))
+        token = create_access_token(identity=str(user.user_id), expires_delta=timedelta(hours=2))
         return jsonify({"message": "Login exitoso", "token": token}), 200
 
     return jsonify({"error": "Credenciales inválidas"}), 401
@@ -47,10 +47,10 @@ def loginConCookie():
     user = User.query.filter_by(user_email=data.get("user_email")).first()
 
     if user and user.check_password(data.get("password")):
-        token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=2))
+        token = create_access_token(identity=str(user.user_id), expires_delta=timedelta(hours=2))
         
         resp = make_response(jsonify({
-        "id": user.id,
+        "user_id": user.user_id,
         "user_name": user.user_name,
         "user_email": user.user_email,
         "created_date": user.created_date
@@ -78,7 +78,7 @@ def profile(user_id):
         return jsonify({'error': 'usuario no encontrado'}), 404
 
     return jsonify({
-        "id": user.id,
+        "user_id": user.user_id,
         "user_name": user.user_name,
         "user_email": user.user_email,
         "created_date": user.created_date
@@ -93,7 +93,7 @@ def obtener_usuarios():
     usuarios = User.query.all()
 
     usuariosLista = [{
-        "id": u.id,
+        "user_id": u.user_id,
         "user_name": u.user_name,
         "user_email": u.user_email,
         "created_date": u.created_date
@@ -111,7 +111,7 @@ def obtener_usuarios():
 def verificacion_token():
     current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
-    return jsonify({"id": user.id, "email": user.user_email})
+    return jsonify({"user_id": user.user_id, "email": user.user_email})
 
 
 # metodo para la edicion de un usaurio
@@ -134,7 +134,7 @@ def editar_usuario(user_id):
         return jsonify({
             "message": "Usuario actualizado con éxito",
             "user": {
-                "id": user.id,
+                "user_id": user.user_id,
                 "user_name": user.user_name,
                 "user_email": user.user_email,
                 "created_date": user.created_date
