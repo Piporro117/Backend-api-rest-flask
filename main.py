@@ -8,6 +8,7 @@ with app.app_context():
 
     if not User.query.filter_by(user_rol="admin").first():
         User.create_user(
+            user_clave="admin",
             user_name="admin",
             user_ape_mat="admin",
             user_ape_pat="admin",
