@@ -7,6 +7,7 @@ class User(db.Model):
 
     # atributos de la tabla
     user_id : int = db.Column(db.Integer, primary_key=True)
+    user_clave: str = db.Column(db.String(20))
     user_name: str = db.Column(db.String(20))
     user_ape_pat: str = db.Column(db.String(20))
     user_ape_mat: str = db.Column(db.String(20))
@@ -24,6 +25,7 @@ class User(db.Model):
     # funcion para crear un usuario
     @classmethod
     def create_user(cls,
+                user_clave: str,
                 user_name: str,
                 user_ape_pat: str,
                 user_ape_mat: str,
@@ -33,6 +35,7 @@ class User(db.Model):
                 user_estatus: str,
                 password: str):
         usuario: User = cls(
+        user_clave=user_clave,
         user_name=user_name,
         user_ape_pat=user_ape_pat,
         user_ape_mat=user_ape_mat,
