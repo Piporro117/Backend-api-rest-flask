@@ -186,3 +186,17 @@ def eliminar_usuario(user_id):
         return jsonify({"message": "Usuario eliminado con éxito"}), 200
     except Exception as e:
         return jsonify({"error": "Error al eliminar usuario", "details": str(e)}), 500
+
+
+# metodo para el cambio de contraseña del usuario
+@authentication.route("/actualizarContraseña/<int:user_id>", methods=["PUT"])
+#@jwt_required()
+def actualizar_contraseña(user_id: int, current_password: str, new_password: str):
+    try:
+        if not User.update_password_by_id(user_id, current_password, new_password):
+              return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        return jsonify({"message": "Contraseña actualizada con exito"}), 200
+        
+    except Exception as e:
+        return jsonify({"error": "Error al actualizar constraseña", "details": str(e)}), 500
