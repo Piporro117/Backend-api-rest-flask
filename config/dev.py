@@ -1,5 +1,12 @@
+import os
+from dotenv import load_dotenv
+
+#carga de env
+load_dotenv()
+
 DEBUG = True
 SECRET_KEY = 'secreto'
+#SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URL")
 SQLALCHEMY_DATABASE_URI = "sqlite:///../instance/database.db"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
