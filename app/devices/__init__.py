@@ -1,6 +1,6 @@
 from flask import Blueprint
 
 # creamos la nueva bluepritn
-devices = Blueprint("devices", __name__)
+device = Blueprint("device", __name__)
 
 from app.devices import views

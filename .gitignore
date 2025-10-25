@@ -13,3 +13,6 @@ __pycache__/
 # Archivos de VSCode / IDE
 .vscode/
 .idea/
+
+# datos de sqlite
+.db

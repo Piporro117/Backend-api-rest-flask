@@ -22,9 +22,9 @@ def create_app(config_type):
 
 
     from app.auth import authentication
-    from app.devices import devices
+    from app.devices import device
 
     app.register_blueprint(authentication, url_prefix="/api/auth")
-    app.register_blueprint(devices, url_prefix="/api/device")
+    app.register_blueprint(device, url_prefix="/api/device")
 
     return app
