@@ -97,14 +97,14 @@ def obtener_dispositivos():
 # metodo para la edicion de un usaurio
 @device.route("/editarDispositivo/<int:dev_id>", methods=["PUT"])
 #@jwt_required()
-def editar_dispositivo(dev_id):
+def editar_dispositivo(dev_id: int):
 
     # obtenemos el json
     data = request.get_json()
 
     try:
         device: Device = Device.update_device_by_id(
-            dev_id=data["dev_id"],
+            dev_id=dev_id,
             dev_nombre=data["dev_nombre"],
             dev_eui=data["dev_eui"],
             dev_num_ser=data["dev_num_ser"],

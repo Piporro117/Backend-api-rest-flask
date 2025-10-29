@@ -1,6 +1,7 @@
 from app import create_app, db
 from app.auth.models import User
 from app.devices.models import Device
+from app.responses.models import ResponseWater
 
 app = create_app("dev")
 
