@@ -95,7 +95,10 @@ def obtener_respuesta_por_dev_eui(dev_eui: str):
     response: ResponseWater = ResponseWater.get_latest_response_by_dev_eui(dev_eui)
 
     if not response:
-        return jsonify({'error': 'Respuesta no encontrado'}), 404
+        return jsonify(None), 200 
+
+    # if not response:
+    #     return jsonify({'error': 'Respuesta no encontrada'}), 404
     
     return jsonify({
         "resp_id": response.resp_id,
