@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from app.responses import response
 from app.responses.models import ResponseWater, SensorReading
+from app.devices.models import Device
 from flask_jwt_extended import jwt_required
 
 # funcion para guardar
@@ -278,10 +279,21 @@ def obtener_todas_lecturas():
 
     lecturas: list[SensorReading] = SensorReading.get_all_readings()
 
-    lecturas_list = [
-        {c.name: getattr(l, c.name) for c in l.__table__.columns}
-        for l in lecturas
-    ]
+    # lecturas_list = [
+    #     {c.name: getattr(l, c.name) for c in l.__table__.columns}
+    #     for l in lecturas
+    # ]
+
+    lecturas_list = []
+
+    for lectura in lecturas:
+        lectura_dict = {c.name: getattr(lectura, c.name) for c in lectura.__table__.columns}
+
+        dispositivo: Device = Device.get_device_by_num_ser(lectura.device_eui)
+        lectura_dict["dev_nombre"] = dispositivo.dev_nombre if dispositivo else None
+
+        lecturas_list.append(lectura_dict)
+
 
     return jsonify(lecturas_list), 200
 

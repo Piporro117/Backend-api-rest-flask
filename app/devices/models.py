@@ -77,3 +77,10 @@ class Device(db.Model):
     @classmethod
     def get_all_devices(cls):
         return cls.query.all()
+    
+
+    # funcion para obtener el dispositivio por numero de serie
+    @classmethod
+    def get_device_by_num_ser(cls, dev_num_ser: str):
+        return cls.query.filter_by(dev_num_ser=dev_num_ser).first()
+        
