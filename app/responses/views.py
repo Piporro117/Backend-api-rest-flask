@@ -1,8 +1,6 @@
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 from app.responses import response
-from app.responses.models import ResponseWater
-from datetime import timedelta
-from app import db
+from app.responses.models import ResponseWater, SensorReading
 from flask_jwt_extended import jwt_required
 
 # funcion para guardar
@@ -169,3 +167,160 @@ def eliminar_respuesta(resp_id: int):
         return jsonify({"message": "Respuesta eliminada con éxito"}), 200
     except Exception as e:
         return jsonify({"error": "Error al eliminar Respuesta", "details": str(e)}), 500
+    
+
+
+
+#----------------------- RUTAS DE NUEVA RESPUETSA DE LORAWAN-----------------------------
+
+# guardar lectura
+@response.route("/guardarLectura", methods=['POST'])
+#@jwt_required()
+def guardar_lectura():
+    
+    data: SensorReading = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No se proporcionaron datos"}), 400
+    
+    # guardamos la lectura
+    try:
+        lectura: SensorReading = SensorReading.create_reading(
+            gateway_id=data.get("gateway_id"),
+            raw_payload=data.get("raw_payload"),
+            device_eui=data.get("device_eui"),
+            function_code=data.get("function_code"),
+            reporting_type=data.get("reporting_type"),
+            device_has_valve=data.get("device_has_valve"),
+            device_is_prepaid=data.get("device_is_prepaid"),
+            device_power_source=data.get("device_power_source"),
+            device_is_rechargeable=data.get("device_is_rechargeable"),
+            device_class=data.get("device_class"),
+            cumulative_flow_unit=data.get("cumulative_flow_unit"),
+            instantaneous_flow_unit=data.get("instantaneous_flow_unit"),
+            temperature_unit=data.get("temperature_unit"),
+            cumulative_water_volume=data.get("cumulative_water_volume"),
+            yesterday_cumulative_water_volume=data.get("yesterday_cumulative_water_volume"),
+            instantaneous_flow=data.get("instantaneous_flow"),
+            water_temperature=data.get("water_temperature"),
+            big_alarm_min_flow_rate=data.get("big_alarm_min_flow_rate"),
+            small_alarm_max_flow_rate=data.get("small_alarm_max_flow_rate"),
+            alarm_reverse_flow=data.get("alarm_reverse_flow"),
+            alarm_empty_pipe=data.get("alarm_empty_pipe"),
+            alarm_low_power_warning=data.get("alarm_low_power_warning"),
+            alarm_low_power=data.get("alarm_low_power"),
+            alarm_flow_limit=data.get("alarm_flow_limit"),
+            alarm_low_flow=data.get("alarm_low_flow"),
+            alarm_high_water_temp=data.get("alarm_high_water_temp"),
+            alarm_low_water_temp=data.get("alarm_low_water_temp"),
+            alarm_low_water_level=data.get("alarm_low_water_level"),
+            alarm_water_overdraft=data.get("alarm_water_overdraft"),
+            alarm_water_overdraft_end=data.get("alarm_water_overdraft_end"),
+            alarm_high_current=data.get("alarm_high_current"),
+            alarm_small_flow=data.get("alarm_small_flow"),
+            alarm_zero_balance=data.get("alarm_zero_balance"),
+            valve_is_open=data.get("valve_is_open"),
+            valve_is_closed=data.get("valve_is_closed"),
+            valve_failure=data.get("valve_failure"),
+            last_valve_command=data.get("last_valve_command"),
+            total_uploads=data.get("total_uploads"),
+            last_valve_actuation_time_sec=data.get("last_valve_actuation_time_sec"),
+            valve_closing_count=data.get("valve_closing_count"),
+            valve_opening_count=data.get("valve_opening_count"),
+            rust_removal_count=data.get("rust_removal_count"),
+            rust_removal_state=data.get("rust_removal_state"),
+            flow_alarm_serial_number=data.get("flow_alarm_serial_number"),
+        )
+
+        return jsonify({
+            "message": "Lectura creada con éxito",
+            "id": lectura.id
+        }), 200
+    
+    except Exception as e:
+        return jsonify({"error": "Error al registrar lectura", "details": str(e)}), 500
+
+
+# actualizar lectura
+@response.route("/editarLectura/<int:reading_id>", methods=['PUT'])
+#@jwt_required()
+def actualizar_lectura(reading_id: int):
+
+    data = request.get_json()
+
+    try:
+        lectura: SensorReading = SensorReading.update_reading_by_id(reading_id, **data)
+
+        if not lectura:
+            return jsonify({"error": "Lectura no encontrada"}), 404
+        
+        return jsonify({"message": "Lectura actualizada correctamente"}), 200
+    except Exception as ex:
+        return jsonify({"error": "Error al actualizar lectura", "details": str(ex)}), 500
+    
+
+# obtener lectura por lectura id
+@response.route("/consultarLecturaPorId/<int:reading_id>", methods=['GET'])
+@jwt_required()
+def obtener_lectura_por_id(reading_id: int):
+
+    lectura: SensorReading = SensorReading.get_reading_by_id(reading_id)
+
+    if not lectura:
+        return jsonify({"error": "Lectura no encontrada"}), 404
+    
+    return jsonify({c.name: getattr(lectura, c.name) for c in lectura.__table__.columns}), 200
+
+# obtener todas las lecturas
+@response.route("/consultarTodasLecturas", methods=['GET'])
+@jwt_required()
+def obtener_todas_lecturas():
+
+    lecturas: list[SensorReading] = SensorReading.get_all_readings()
+
+    lecturas_list = [
+        {c.name: getattr(l, c.name) for c in l.__table__.columns}
+        for l in lecturas
+    ]
+
+    return jsonify(lecturas_list), 200
+
+# obtener lectura mas reciente por dev_eui
+@response.route("/consultarLecturaRecientePorDevice/<string:device_eui>", methods=['GET'])
+@jwt_required()
+def obtener_lectura_reciente_por_dev_eui(device_eui: str):
+
+    lectura: SensorReading = SensorReading.get_latest_reading_by_device_eui(device_eui)
+
+    if not lectura:
+        return jsonify(None), 200
+    
+    return jsonify({c.name: getattr(lectura, c.name) for c in lectura.__table__.columns}), 200
+
+
+# obtener lecturas de un device _eui 
+@response.route("/obtenerLecturasPorEUI/<string:device_eui>", methods=["GET"])
+@jwt_required()
+def obtener_lecturas_por_eui(device_eui: str):
+    lecturas: list[SensorReading] = SensorReading.get_readings_by_device_eui(device_eui)
+
+    lecturas_list = [
+        {c.name: getattr(l, c.name) for c in l.__table__.columns}
+        for l in lecturas
+    ]
+
+    return jsonify(lecturas_list), 200
+
+
+# eliminar lectura por id
+@response.route("/eliminarLecturaPorId/<int:reading_id>", methods=['GET'])
+#@jwt_required()
+def eliminar_lectura(reading_id: int):
+    try:
+        if not SensorReading.delete_reading_by_id(reading_id):
+            return jsonify({"error": "Lectura no encontrada"}), 404
+
+        return jsonify({"message": "Lectura eliminada con éxito"}), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error al eliminar lectura", "details": str(e)}), 500
