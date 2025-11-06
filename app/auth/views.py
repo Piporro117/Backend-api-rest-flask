@@ -14,9 +14,11 @@ def registrar_usuario():
     data = request.get_json()
 
     required_fields: list[str] = [ 
-        "user_name", "user_ape_pat", "user_ape_mat",
+        "user_nombre","user_calle","user_rfc"
         "user_email", "user_telef", "user_rol",
-        "user_estatus", "password", "user_clave"
+        "user_col", "user_ciudad", "user_estado",
+        "user_estatus", "password", "user_clave",
+        "user_num_ext"
     ]
 
     if not data or not all(k in data for k in required_fields):
@@ -29,11 +31,15 @@ def registrar_usuario():
     try:
         user = User.create_user(
             user_clave=data["user_clave"],
-            user_name=data["user_name"],
-            user_ape_pat=data["user_ape_pat"],
-            user_ape_mat=data["user_ape_mat"],
+            user_nombre=data["user_nombre"],
             user_email=data["user_email"],
             user_telef=data["user_telef"],
+            user_rfc=data["user_rfc"],
+            user_calle=data["user_calle"],
+            user_num_ext=data["user_num_ext"],
+            user_col=data["user_col"],
+            user_ciudad=data["user_ciudad"],
+            user_estado=["user_estado"],
             user_rol=data["user_rol"],
             user_estatus=data["user_estatus"],
             password=data["password"]
@@ -72,7 +78,7 @@ def loginConCookie():
         resp = make_response(jsonify({
         "user_id": user.user_id,
         "user_clave": user.user_clave,
-        "user_name": user.user_name,
+        "user_nombre": user.user_nombre,
         "user_email": user.user_email,
         "created_date": user.created_date
     }), 200)
@@ -103,9 +109,13 @@ def profile(user_id):
     return jsonify({
         "user_id": user.user_id,
         "user_clave": user.user_clave,
-        "user_name": user.user_name,
-        "user_ape_pat": user.user_ape_pat,
-        "user_ape_mat": user.user_ape_mat,
+        "user_nombre": user.user_nombre,
+        "user_rfc": user.user_rfc,
+        "user_calle": user.user_calle,
+        "user_col": user.user_col,
+        "user_ciudad": user.user_ciudad,
+        "user_estado": user.user_estado,
+        "user_num_ext": user.user_num_ext,
         "user_email": user.user_email,
         "user_telef": user.user_telef,
         "user_rol": user.user_rol,
@@ -124,11 +134,15 @@ def obtener_usuarios():
     usuariosLista = [{
         "user_id": user.user_id,
         "user_clave": user.user_clave,
-        "user_name": user.user_name,
-        "user_ape_pat": user.user_ape_pat,
-        "user_ape_mat": user.user_ape_mat,
+        "user_nombre": user.user_nombre,
         "user_email": user.user_email,
         "user_telef": user.user_telef,
+        "user_rfc": user.user_rfc,
+        "user_calle": user.user_calle,
+        "user_col": user.user_col,
+        "user_ciudad": user.user_ciudad,
+        "user_estado": user.user_estado,
+        "user_num_ext": user.user_num_ext,
         "user_rol": user.user_rol,
         "user_estatus": user.user_estatus,
         "created_date": user.created_date
@@ -159,9 +173,13 @@ def editar_usuario(user_id):
     try:
         user: User = User.update_user_by_id(
             user_id=user_id,
-            user_name=data.get("user_name"),
-            user_ape_pat=data.get("user_ape_pat"),
-            user_ape_mat=data.get("user_ape_mat"),
+            user_nombre=data.get("user_nombre"),
+            user_rfc=data.get("user_rfc"),
+            user_calle=data.get("user_calle"),
+            user_ciudad=data.get("user_ciudad"),
+            user_col=data.get("user_col"),
+            user_estado=data.get("user_estado"),
+            user_num_ext=data.get("user_num_ext"),
             user_email=data.get("user_email"),
             user_telef=data.get("user_telef"),
             user_rol=data.get("user_rol"),

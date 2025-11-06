@@ -14,13 +14,15 @@ class Device(db.Model):
     id_zona: int = db.Column(db.Integer, nullable=True)
     dev_descr: str = db.Column(db.String(2000))
     dev_tipo: str = db.Column(db.String(20))
+    dev_lat: str = db.Column(db.Float)
+    dev_long: str = db.Column(db.Float)
     dev_estatus : str = db.Column(db.String(1))
     created_date: datetime = db.Column(db.DateTime, default=datetime.now)
 
     # funcion para crear un dispositivo
     @classmethod
     def create_device(cls, dev_nombre: str, dev_eui: str, dev_num_ser: str,id_gateway: int ,id_zona: int,
-                      dev_descr: str, dev_tipo: str, dev_estatus: str):
+                      dev_descr: str, dev_tipo: str, dev_estatus: str, dev_lat: str, dev_long: str):
 
         device = cls(
             dev_nombre=dev_nombre,
@@ -30,6 +32,8 @@ class Device(db.Model):
             id_zona=id_zona,
             dev_descr=dev_descr,
             dev_tipo=dev_tipo,
+            dev_lat= dev_lat,
+            dev_long=dev_long,
             dev_estatus=dev_estatus
         )
 
@@ -40,7 +44,7 @@ class Device(db.Model):
     # funcion para actualizar dispositivo
     @classmethod
     def update_device_by_id(cls, dev_id: int, dev_nombre: str, dev_eui: str, dev_num_ser: str,
-                            id_gateway:int, id_zona: int, dev_descr: str, dev_tipo: str, dev_estatus: str):
+                            id_gateway:int, id_zona: int, dev_descr: str, dev_tipo: str, dev_estatus: str,dev_lat: str, dev_long: str):
         
         device: Device = cls.query.get(dev_id)
         if not device:
@@ -53,6 +57,8 @@ class Device(db.Model):
         device.id_zona = id_zona
         device.dev_descr = dev_descr
         device.dev_tipo = dev_tipo
+        device.dev_long = dev_long
+        device.dev_lat = dev_lat
         device.dev_estatus = dev_estatus
 
         db.session.commit()

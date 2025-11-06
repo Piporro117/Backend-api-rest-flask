@@ -13,7 +13,7 @@ def registrar_dispositivo():
     data: Device = request.get_json()
 
     required_fields: list[str] = ["dev_nombre", "dev_eui", "dev_num_ser",
-        "dev_descr", "dev_tipo", "dev_estatus"]
+        "dev_descr", "dev_tipo", "dev_estatus", "dev_lat", "dev_long"]
     
     if not data or not all(k in data for k in required_fields):
         return jsonify({"error": "Faltan datos"}), 400
@@ -35,6 +35,8 @@ def registrar_dispositivo():
             id_zona=data["id_zona"],
             dev_descr=data["dev_descr"],
             dev_tipo=data["dev_tipo"],
+            dev_lat=data["dev_lat"],
+            dev_long=data["dev_long"],
             dev_estatus=data["dev_estatus"]            
         )
 
@@ -66,6 +68,8 @@ def obtenerDispositivoPorId(dev_id: int):
         "id_zona": device.id_zona,
         "dev_descr": device.dev_descr,
         "dev_tipo": device.dev_tipo,
+        "dev_lat": device.dev_lat,
+        "dev_long": device.dev_long,
         "dev_estatus": device.dev_estatus,
         "created_date": device.created_date
     }), 200
@@ -86,6 +90,8 @@ def obtener_dispositivos():
         "id_zona": dispositivo.id_zona,
         "dev_descr": dispositivo.dev_descr,
         "dev_tipo": dispositivo.dev_tipo,
+        "dev_lat": dispositivo.dev_lat,
+        "dev_long": dispositivo.dev_long,
         "dev_estatus": dispositivo.dev_estatus,
         "created_date": dispositivo.created_date}
         for dispositivo in dispositivos    
@@ -112,6 +118,8 @@ def editar_dispositivo(dev_id: int):
             id_zona=data["id_zona"],
             dev_descr=data["dev_descr"],
             dev_tipo=data["dev_tipo"],
+            dev_lat=data["dev_lat"],
+            dev_long=data["dev_long"],
             dev_estatus=data["dev_estatus"]            
         )
         if not device:

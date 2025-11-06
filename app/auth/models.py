@@ -7,13 +7,17 @@ class User(db.Model):
 
     # atributos de la tabla
     user_id : int = db.Column(db.Integer, primary_key=True)
-    user_clave: str = db.Column(db.String(20))
-    user_name: str = db.Column(db.String(20))
-    user_ape_pat: str = db.Column(db.String(20))
-    user_ape_mat: str = db.Column(db.String(20))
-    user_email: str = db.Column(db.String(60), unique=True, index=True)
+    user_clave: str = db.Column(db.String(20), index=True)
+    user_nombre: str = db.Column(db.String(20))
+    user_email: str = db.Column(db.String(60), unique=True)
     user_telef: int = db.Column(db.Integer)
+    user_rfc: str = db.Column(db.String(15), unique=True)
     user_rol: str = db.Column(db.String(20))
+    user_calle: str = db.Column(db.String(100))
+    user_col: str = db.Column(db.String(100))
+    user_ciudad: str = db.Column(db.String(100))
+    user_estado:  str = db.Column(db.String(100))
+    user_num_ext: str = db.Column(db.String(10))
     user_estatus: str = db.Column(db.String(1))
     user_password: str = db.Column(db.String(80))
     created_date: datetime = db.Column(db.DateTime, default=datetime.now)
@@ -26,19 +30,28 @@ class User(db.Model):
     @classmethod
     def create_user(cls,
                 user_clave: str,
-                user_name: str,
-                user_ape_pat: str,
-                user_ape_mat: str,
+                user_nombre: str,
                 user_email: str,
                 user_telef: int,
                 user_rol: str,
+                user_rfc: str,
+                user_calle: str,
+                user_col: str,
+                user_num_ext: str,
+                user_ciudad: str,
+                user_estado: str,
                 user_estatus: str,
                 password: str):
+        
         usuario: User = cls(
         user_clave=user_clave,
-        user_name=user_name,
-        user_ape_pat=user_ape_pat,
-        user_ape_mat=user_ape_mat,
+        user_nombre=user_nombre,
+        user_rfc=user_rfc,
+        user_calle=user_calle,
+        user_num_ext = user_num_ext,
+        user_col=user_col,
+        user_ciudad=user_ciudad,
+        user_estado=user_estado,
         user_email=user_email,
         user_telef=user_telef,
         user_rol=user_rol,
@@ -52,24 +65,33 @@ class User(db.Model):
     
     # metodo para actualziar usuario
     @classmethod
-    def update_user_by_id(cls, user_id: int, user_name: str,user_ape_pat: str,
-                user_ape_mat: str,
+    def update_user_by_id(cls, user_id: int, user_nombre: str,
                 user_email: str,
                 user_telef: int,
                 user_rol: str,
+                user_rfc: str,
+                user_calle: str,
+                user_num_ext: str,
+                user_col: str,
+                user_ciudad: str,
+                user_estado: str,
                 user_estatus: str):
         
-        usuario = cls.query.get(user_id)
+        usuario: User = cls.query.get(user_id)
 
         if not usuario:
             return None
         
         # actualizar campos de usaurio
-        usuario.user_name = user_name
-        usuario.user_ape_pat = user_ape_pat
-        usuario.user_ape_mat = user_ape_mat
+        usuario.user_nombre = user_nombre
         usuario.user_email = user_email
         usuario.user_telef = user_telef
+        usuario.user_rfc = user_rfc
+        usuario.user_calle = user_calle
+        usuario.user_num_ext = user_num_ext
+        usuario.user_col = user_col,
+        usuario.user_ciudad = user_ciudad
+        usuario.user_estado = user_estado
         usuario.user_rol = user_rol
         usuario.user_estatus = user_estatus
 
