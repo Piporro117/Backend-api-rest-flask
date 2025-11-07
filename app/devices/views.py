@@ -1,4 +1,4 @@
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 from app.devices import device
 from app.devices.models import Device
 from datetime import timedelta
