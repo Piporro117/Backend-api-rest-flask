@@ -89,4 +89,9 @@ class Device(db.Model):
     @classmethod
     def get_device_by_num_ser(cls, dev_num_ser: str):
         return cls.query.filter_by(dev_num_ser=dev_num_ser).first()
+    
+    # funcion para obtener dispositivos por id de gateway
+    @classmethod
+    def get_all_devices_by_gateway_id(cls, gate_id: int):
+        return cls.query.filter_by(gate_id=gate_id)
         

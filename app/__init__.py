@@ -24,9 +24,11 @@ def create_app(config_type):
     from app.auth import authentication
     from app.devices import device
     from app.responses import response
+    from app.gateways import gateway
 
     app.register_blueprint(authentication, url_prefix="/api/auth")
     app.register_blueprint(device, url_prefix="/api/device")
     app.register_blueprint(response, url_prefix="/api/response")
+    app.register_blueprint(gateway, url_prefix="/api/gateway")
 
     return app

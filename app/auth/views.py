@@ -42,7 +42,7 @@ def registrar_usuario():
             user_estado=["user_estado"],
             user_rol=data["user_rol"],
             user_estatus=data["user_estatus"],
-            password=data["password"]
+            password=data["user_password"]
         )
 
         return jsonify({
@@ -72,7 +72,7 @@ def loginConCookie():
     data = request.get_json()
     user: User = User.query.filter_by(user_clave=data.get("user_clave")).first()
 
-    if user and user.check_password(data.get("password")):
+    if user and user.check_password(data.get("user_password")):
         token = create_access_token(identity=str(user.user_id), expires_delta=timedelta(hours=2))
         
         resp = make_response(jsonify({
@@ -80,6 +80,7 @@ def loginConCookie():
         "user_clave": user.user_clave,
         "user_nombre": user.user_nombre,
         "user_email": user.user_email,
+        "user_rol": user.user_rol,
         "created_date": user.created_date
     }), 200)
         set_access_cookies(resp, token, max_age=60*60*2)

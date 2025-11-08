@@ -141,3 +141,30 @@ def eliminar_dispositivo(dev_id):
         return jsonify({"message": "Dispositivo eliminado con éxito"}), 200
     except Exception as e:
         return jsonify({"error": "Error al eliminar Dispositivo", "details": str(e)}), 500
+    
+
+# metodo para obtener los dispositivos por gateway id
+# obtener todos los dispositivos
+@device.route("/consultarPorGateway/<int:gate_id>", methods=["GET"])
+@jwt_required()
+def obtener_dispositivos_por_gateway(gate_id: int):
+
+    dispositivos: list[Device] = Device.get_all_devices_by_gateway_id(gate_id)
+
+    dispositivosLista = [{
+        "dev_id": dispositivo.dev_id,
+        "dev_nombre": dispositivo.dev_nombre,
+        "dev_eui": dispositivo.dev_eui,
+        "dev_num_ser": dispositivo.dev_num_ser,
+        "id_gateway": dispositivo.id_gateway,
+        "id_zona": dispositivo.id_zona,
+        "dev_descr": dispositivo.dev_descr,
+        "dev_tipo": dispositivo.dev_tipo,
+        "dev_lat": dispositivo.dev_lat,
+        "dev_long": dispositivo.dev_long,
+        "dev_estatus": dispositivo.dev_estatus,
+        "created_date": dispositivo.created_date}
+        for dispositivo in dispositivos    
+    ]
+
+    return jsonify(dispositivosLista), 200
