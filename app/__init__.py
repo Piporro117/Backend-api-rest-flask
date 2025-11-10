@@ -18,7 +18,10 @@ def create_app(config_type):
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    CORS(app, supports_credentials=True, origins=["http://localhost:3000"]) # permiritr que envie cualqier persona
+    if config_type == "dev":
+        CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+    else:
+        CORS(app, supports_credentials=True, origins=["https://tu-dominio.com"])
 
 
     from app.auth import authentication

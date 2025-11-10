@@ -93,5 +93,5 @@ class Device(db.Model):
     # funcion para obtener dispositivos por id de gateway
     @classmethod
     def get_all_devices_by_gateway_id(cls, gate_id: int):
-        return cls.query.filter_by(gate_id=gate_id)
+        return cls.query.filter_by(id_gateway=gate_id)
         

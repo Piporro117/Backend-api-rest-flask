@@ -46,7 +46,7 @@ def registrar_gateway():
         return jsonify({"error": "Error al registrar el gateway", "details": str(e)}), 500
     
 
-@gateway.route("/obtenerGateway/<int:dev_id>", methods=["GET"])
+@gateway.route("/obtenerGateway/<int:gate_id>", methods=["GET"])
 @jwt_required()
 def obtener_gateway_por_id(gate_id: int):
 

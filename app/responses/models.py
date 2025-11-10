@@ -412,8 +412,12 @@ class SensorReading(db.Model):
 
     @classmethod
     def get_readings_by_device_eui(cls, device_eui: str):
-        return cls.query.filter_by(device_eui=device_eui).order_by(cls.received_at.desc()).all()
+        return cls.query.filter_by(device_eui=device_eui).order_by(cls.received_at.asc()).all()
 
     @classmethod
     def get_latest_reading_by_device_eui(cls, device_eui: str):
         return cls.query.filter_by(device_eui=device_eui).order_by(cls.received_at.desc()).first()
+    
+    @classmethod
+    def get_reading_by_gateway_clave(cls, gate_clave: str):
+        return cls.query.filter_by(gateway_id=gate_clave).order_by(cls.received_at.desc())

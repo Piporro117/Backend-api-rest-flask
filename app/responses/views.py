@@ -278,24 +278,39 @@ def obtener_lectura_por_id(reading_id: int):
 def obtener_todas_lecturas():
 
     lecturas: list[SensorReading] = SensorReading.get_all_readings()
-
-    # lecturas_list = [
-    #     {c.name: getattr(l, c.name) for c in l.__table__.columns}
-    #     for l in lecturas
-    # ]
-
     lecturas_list = []
 
     for lectura in lecturas:
         lectura_dict = {c.name: getattr(lectura, c.name) for c in lectura.__table__.columns}
 
         dispositivo: Device = Device.get_device_by_num_ser(lectura.device_eui)
-        lectura_dict["dev_nombre"] = dispositivo.dev_nombre if dispositivo else None
 
-        lecturas_list.append(lectura_dict)
-
+        # ✅ solo incluir si el dispositivo existe y tiene nombre
+        if dispositivo and dispositivo.dev_nombre:
+            lectura_dict["dev_nombre"] = dispositivo.dev_nombre
+            lecturas_list.append(lectura_dict)
 
     return jsonify(lecturas_list), 200
+
+    # lecturas: list[SensorReading] = SensorReading.get_all_readings()
+
+    # # lecturas_list = [
+    # #     {c.name: getattr(l, c.name) for c in l.__table__.columns}
+    # #     for l in lecturas
+    # # ]
+
+    # lecturas_list = []
+
+    # for lectura in lecturas:
+    #     lectura_dict = {c.name: getattr(lectura, c.name) for c in lectura.__table__.columns}
+
+    #     dispositivo: Device = Device.get_device_by_num_ser(lectura.device_eui)
+    #     lectura_dict["dev_nombre"] = dispositivo.dev_nombre if dispositivo else None
+
+    #     lecturas_list.append(lectura_dict)
+
+
+    # return jsonify(lecturas_list), 200
 
 # obtener lectura mas reciente por dev_eui
 @response.route("/consultarLecturaRecientePorDevice/<string:device_eui>", methods=['GET'])
@@ -336,3 +351,16 @@ def eliminar_lectura(reading_id: int):
 
     except Exception as e:
         return jsonify({"error": "Error al eliminar lectura", "details": str(e)}), 500
+    
+# obtener lecturas por gateway id
+@response.route("/obtenerLecturasPorGateway/<string:gate_clave>", methods=["GET"])
+@jwt_required()
+def obtener_lecturas_por_gateway(gate_clave: str):
+    lecturas: list[SensorReading] = SensorReading.get_reading_by_gateway_clave(gate_clave)
+
+    lecturas_list = [
+        {c.name: getattr(l, c.name) for c in l.__table__.columns}
+        for l in lecturas
+    ]
+
+    return jsonify(lecturas_list), 200

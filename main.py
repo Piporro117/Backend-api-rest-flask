@@ -45,6 +45,38 @@ with app.app_context():
                 gate_estatus="1",
                 user_id=2
             )
+
+        if not User.query.filter_by(user_clave="pcentenario01").first():
+            User.create_user(
+                user_clave="pcentenario01",
+                user_nombre="Parque centenario 01",
+                user_rol="estan",
+                user_email="contacto@4ti.io",
+                user_telef="0000010000",
+                user_rfc="XXX00000XXXX",
+                user_calle="S/N",
+                user_col="Centro",
+                user_num_ext="0",
+                user_ciudad="Sin ciudad",
+                user_estado="Sin estado",
+                user_estatus="1",
+                password="pcentenario01.!"
+            )
+
+        if not Device.query.filter_by(dev_eui="0095690600058B42").first():
+            Device.create_device(
+                dev_nombre="VOSS Automotive",
+                dev_num_ser="70666100019109",
+                dev_eui="0095690600058B42",
+                dev_descr="VOSS Automotive México",
+                dev_estatus="1",
+                dev_long=25.454925,
+                dev_lat=-103.318244,
+                dev_tipo="agu",
+                id_gateway=1,
+                id_zona=None
+            )
+        
     except Exception as e:
         print("❌ Error al conectar con la base de datos:")
         print(e)
