@@ -4,6 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+#carga de env
+load_dotenv()
 
 # creacion de la base de datos
 db: SQLAlchemy = SQLAlchemy()
@@ -21,7 +25,7 @@ def create_app(config_type):
     if config_type == "dev":
         CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
     else:
-        CORS(app, supports_credentials=True, origins=["https://tu-dominio.com"])
+        CORS(app, supports_credentials=True, origins=[os.getenv("DOMAIN_URL")])
 
 
     from app.auth import authentication
